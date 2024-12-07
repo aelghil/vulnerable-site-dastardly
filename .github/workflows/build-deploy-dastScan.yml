@@ -83,9 +83,9 @@ jobs:
         require_tests: true
 
   scan-with-zap:
-  runs-on: ubuntu-latest
-  name: Scan with ZAP
-  needs: deploy
+    runs-on: ubuntu-latest
+    name: Scan with ZAP
+    needs: deploy
 
     steps:
     - name: Checkout
