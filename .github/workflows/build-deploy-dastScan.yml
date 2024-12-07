@@ -62,24 +62,6 @@ jobs:
           app-name: 'webapp-vulnerablesite'
           slot-name: 'Production'
           package: .
-          
-  scan-with-zap:
-    runs-on: ubuntu-latest
-    name: Scan with ZAP
-    needs: deploy
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: master
-      - name: Run ZAP Scan
-        uses: zaproxy/action-full-scan@v0.11.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
-          cmd_options: '-a'
-          target: 'https://webapp-vulnerablesite-cbbke3hug0cgbuak.canadacentral-01.azurewebsites.net/'
 
   scan-with-dastardly:
     name: Scan with Dastardly
@@ -99,3 +81,22 @@ jobs:
         check_name: 'Dastardly Scan Report'
         report_paths: '**/dastardly-report.xml'
         require_tests: true
+
+  scan-with-zap:
+    runs-on: ubuntu-latest
+    name: Run DAST scan on the web application
+    needs: deploy
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.6.1
+        with:
+          docker_name: 'owasp/zap2docker-stable'
+          target: 'https://webapp-vulnerablesite-cbbke3hug0cgbuak.canadacentral-01.azurewebsites.net/'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a
