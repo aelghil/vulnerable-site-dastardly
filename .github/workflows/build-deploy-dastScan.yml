@@ -84,7 +84,7 @@ jobs:
 
   scan-with-zap:
     runs-on: ubuntu-latest
-    name: Run DAST scan on the web application
+    name: Scan with ZAP
     needs: deploy
 
     steps:
