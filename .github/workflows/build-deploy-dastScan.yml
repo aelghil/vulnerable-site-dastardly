@@ -117,7 +117,7 @@ jobs:
   
   burp-scan:
     runs-on: ubuntu-latest
-    name: Scan with ZAP
+    name: Scan with burp suite (community edition)
     needs: deploy
     
     steps:
