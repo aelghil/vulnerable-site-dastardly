@@ -114,3 +114,36 @@ jobs:
         else
           echo "No ZAP output found!"
         fi
+  
+  burp-scan:
+    runs-on: ubuntu-latest
+    name: Scan with ZAP
+    needs: deploy
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Download Burp Suite Community
+        run: |
+          wget https://portswigger.net/burp/releases/download?product=community&version=2023.6.2 -O burpsuite_community_v2023_6_2.sh
+          chmod +x burpsuite_community_v2023_6_2.sh
+
+      - name: Run Burp Suite Scan
+        run: |
+          # Start Burp Suite in headless mode
+          nohup ./burpsuite_community_v2023_6_2.sh --headless --project-file=burp_project.burp --scan-target=https://webapp-vulnerablesite-cbbke3hug0cgbuak.canadacentral-01.azurewebsites.net/ --output-file=burp_scan_report.xml &
+          # Wait for Burp to finish the scan (you may adjust the sleep time as needed)
+          sleep 300
+
+      # Step 5: Upload scan results as artifact
+      - name: Upload Burp Suite scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: burp-scan-results
+          path: burp_scan_report.xml
